@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// src/App.tsx
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import CustomerPage from './pages/CustomerPage';
+import EmployeePage from './pages/EmployeePage';
+import Login from './components/Login';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App: React.FC = () => {
+    const [user, setUser] = useState<{ role: string | null }>({ role: null });
+
+    const handleLogin = (role: string) => {
+        setUser({ role });
+    };
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/login" element={user.role ? <Navigate to={`/${user.role}`} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/customer" element={user.role === 'customer' ? <CustomerPage /> : <Navigate to="/login" />} />
+                <Route path="/employee" element={user.role === 'employee' ? <EmployeePage /> : <Navigate to="/login" />} />
+                <Route path="/" element={<Navigate to="/login" />} />
+            </Routes>
+        </Router>
+    );
+};
 
 export default App;
